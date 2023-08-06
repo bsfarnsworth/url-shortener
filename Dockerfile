@@ -1,16 +1,19 @@
-FROM golang:1.16-alpine
+FROM golang:1.19
 
-WORKDIR /app
+WORKDIR /webapp
 
-COPY go.mod ./
+COPY go.mod go.sum ./
 RUN go mod download
 
-COPY app/ ./
-COPY internal/ ./
-COPY views/ ./
+COPY app/ ./app/
+COPY cmd/ ./cmd/
+COPY internal/ ./internal/
+COPY views/ ./views/
 
-RUN go build -o /wee app/main.go
+# ENV GIN_MODE=release
+
+RUN go build -o ./wee ./cmd/main.go
 
 EXPOSE 3000
 
-CMD [ "/wee" ]
+CMD [ "./wee" ]
