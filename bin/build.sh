@@ -1,1 +1,1 @@
-go build -o wee app/main.go
+go build -o wee cmd/main.go
