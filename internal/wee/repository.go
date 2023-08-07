@@ -1,3 +1,4 @@
+// Module repository provides functions to store wee Urls in a lookup table.
 package wee
 
 import (
@@ -12,7 +13,7 @@ import (
 const (
 	tableName = "weeRecords"
 
-	// TBD combine w/ Record struc
+	// Using the sqlite column types (instead of the go ones) for compatibility
 	tableDefn = `"Tag" TEXT UNIQUE ON CONFLICT FAIL, "Url" TEXT, "Token" TEXT`
 )
 
@@ -25,6 +26,7 @@ type Record struct {
 	Token	string
 }
 
+// Repository bundles the config of the table and a handle to it
 type Repository struct {
 	driver string					// expecting "sqlite3" or compatible
 	source string					// per deployment, e.g. "./foo.db"
@@ -40,6 +42,7 @@ func NewRepository(drv string, src string, log *log.Logger) *Repository {
 		db: nil}
 }
 
+// Connect opens the database and creates the Url table if it doesn't yet exist.
 func (r *Repository) Connect() error {
 
 	// Connect to specified service
@@ -63,11 +66,14 @@ func (r *Repository) Connect() error {
 	return nil
 }
 
+// Disconnect closes the connection.
 func (r *Repository) Disconnect() error {
 	// TBD anything else to do?
 	return r.db.Close()
 }
 
+// create the table used to persist Urls.
+// TBD locking should be added to avoid concurrency problems
 func (r *Repository) create() error {
 
 	cmd := fmt.Sprintf(`CREATE TABLE IF NOT EXISTS %s ( %s );`, tableName, tableDefn)
@@ -75,11 +81,10 @@ func (r *Repository) create() error {
 
 	_, err := r.db.Exec(cmd)
 	if err != nil {
-		r.logger.Printf("ERROR on SQL table creatiion %s, %v\n", tableName, err)
+		r.logger.Printf("ERROR on SQL table creation %s, %v\n", tableName, err)
 	}
 	return err
 }
-
 
 // add inserts a Record into the table
 func (r *Repository) add(rec *Record) error {
@@ -94,34 +99,35 @@ func (r *Repository) add(rec *Record) error {
 }
 
 // find locates an existing Record for the given weeUrl
+// If error is nil then there IS a match,
+// ErrNoRows is returned on the no-match condition, and other errors are possible, too;
+// Record will be nil on any error.
 func (r *Repository) find(weeUrl string) (*Record, error) {
+
+	var err error
 	var rec Record
-	stmt, _ := r.db.Prepare("SELECT * FROM " + tableName + " WHERE Tag = ?")
-	_, err := stmt.Exec(weeUrl)
-	//	defer row.Close()
+
+	// it's a unique tag so there should be no more than a single row 
+	err = r.db.QueryRow("SELECT * FROM " + tableName + " WHERE Tag = ?", weeUrl).Scan(&rec.Tag, &rec.Url, &rec.Token)
+
 	if err != nil {
 		return nil, err
 	}
-	/*
-	err = row.Err()
-	if err != nil {
-		return nil, err
-	}
-	var rec Record
-	err = row.Scan(&rec.Tag, &rec.Url, &rec.Token)
-	if err != nil {
-	}
-	*/
-	return &rec, nil
+
+	return &rec, err
 }
 
-func (r *Repository) remove(rec *Record) error {
-	stmt, err := r.db.Prepare("DELETE FROM records WHERE tag = ?")
+// remove deletes the Record having the specified token.
+// TBD TestRemove has found that an error is NOT reported when removing a record
+//     with a non-existent token.
+func (r *Repository) remove(token string) error {
+
+	stmt, err := r.db.Prepare("DELETE FROM " + tableName + " WHERE Token = ?")
+	_, err = stmt.Exec(token)
 	if err != nil {
 		return err
 	}
-	defer stmt.Close()
-	stmt.Exec(rec.Tag)
+
 	return nil
 }
 
