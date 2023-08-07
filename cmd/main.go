@@ -9,13 +9,23 @@ import (
 )
 
 const (
-	// bring these in from config instead of defining here
-	dbtype = "sqlite3"
-	dbfile = "./WeeRepo.db"	// this needs to reside on a volume in deploy machnine
-	port = ":3000"
 )
 
 func main() {
+	// Obtain these configs from deployment ENV
+	dbtype := os.Getenv("DB_DRIVER")
+	if dbtype == "" {
+		dbtype = "sqlite3"
+	}
+	dbfile := os.Getenv("DB_FILE")
+	if dbfile == "" {
+		dbfile = "./data/WeeRepo.db"	// this needs to reside on a volume in deploy machnine
+	}
+	port := os.Getenv("API_PORT")
+	if port == "" {
+		port = "8080"
+	}
+
 	// Provide the same logger to all
 	logger := log.New(os.Stderr, "[wee] ", log.Lshortfile)
 
@@ -27,6 +37,7 @@ func main() {
 		logger.Printf("Fatal unable to connect to repository %s\n", dbfile)
 		os.Exit(1)
 	}
+	logger.Printf("Connected to %s repository on %s\n", dbtype, dbfile)
 	
 	// Shortener is the toolkit
 	shorty := wee.NewShortener(repo, logger)
@@ -52,5 +63,6 @@ func main() {
 	})
 
 	// Start and run the server
-	router.Run(port)
+	logger.Printf("Serving HTTP on port %s\n", port)
+	router.Run(":"+port)
 }
