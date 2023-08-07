@@ -2,7 +2,7 @@
 
 `url-shortener` is a project to build an application that creates short URLs from long ones.
 
-The repository is reached at `https://github.com/bsfarnsworth/url-shortener`.
+The repository is reached at [https://github.com/bsfarnsworth/url-shortener](https://github.com/bsfarnsworth/url-shortener).
 
 ## Overview
 
@@ -44,7 +44,7 @@ https://wee.fly.dev
 
 ## Usage
 
-- Open a terminal to the directory where you installed `url-shortener`.
+- Open a terminal to the directory where you installed `url-shortener`
 
 ```
 cd tests
@@ -71,7 +71,7 @@ source prodconfig.cfg
 The JSON `weeUrl` value is your shortened URL.  On my development deploy it came up as `xqltu46`.
 
 ```
-{"token":"79f99aed-2779-4bea-905c-5def4750340e","weeUrl":"xqltu46"
+{"token":"79f99aed-2779-4bea-905c-5def4750340e","weeUrl":"xqltu46"}
 ```
 
 - Confirm the URL of a weeURL:
@@ -80,7 +80,7 @@ The JSON `weeUrl` value is your shortened URL.  On my development deploy it came
 ./lengthen.sh xqltu46
 ```
 
-- Retire the URL.  You use the `token` value:
+- Retire the URL.  You use the `token` value (from the `shorten` step:
 
 ```
 ./retire.sh 79f99aed-2779-4bea-905c-5def4750340e
@@ -98,5 +98,12 @@ or the cloud server:
 https://wee.fly.dev/xqltu46
 ```
 
-*Important*, the weeURLs are used on the same server where they were shortened.  This is because the table of URLs lives on the server where it was created and they are not shared between the servers.
+Your browser should display the URL that you chose to shorten.
 
+*Important*, the weeURLs are to be used on the same server where they were shortened.  This is because the table of URLs lives on the server where it was created and they are not shared between the servers.
+
+## Caveats
+
+1. At this time, the web UI is not available.
+
+1. The cloud deployment isn't yet connected to a volume.  This means that the database holding the URLs is lost whenever the cloud machine is stopped.  
