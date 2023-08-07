@@ -13,8 +13,6 @@ I chose the product name “Wee” simply because it’s the shortest word I cou
 
 * *shorten* - Create a wee URL from a given full URL
 * *\<weeUrl\>* - Lookup a wee URL and follow its full URL
-* *lengthen* - Lookup a wee URL to see its full URL 
-* *retire* - Delete an existing wee URL
 
 As spelled out in the assignment, the application's REST service will provide entry points to create new, shortened URLs and to follow those URLs to their destinations.  
 
@@ -22,7 +20,7 @@ We'll propose two additions:
 
 * *lengthen*, the capability to view the expansion of a shortened URL without redirecting to it; this will allow testing of the entire creation and lookup mechanism without incurring any of the actions involved in the redirect; and
 
-* *retire*, for the URL owner to modify it.  We won't go so far as to allow editing or updates, but we'll make it possible to delete an existing URL; the user's update would then be to simply create a new one.  This allows for correction of mistakes and for removal of obsolete or dead links. We'll call this operation retirement.
+* *retire*, for the URL owner to modify it.  We won't go so far as to allow editing or updates, but we'll make it possible to delete an existing URL; the user's update would then be to simply create a new one.  This allows for correction of mistakes and for removal of obsolete or dead links; a user might also want to delete a link that was shared but the user has concerns about who may now have it.  We'll call this operation retirement.
 
 With retirement there's a possibility of misuse: rivals or miscreants might want to delete URLs.  Protecting the modification capability could be complicated if it involved authentication.  We'll simplify it by issuing a token along with the wee URL.  The user will be directed to keep it in a safe place.  It won't expire, and when the user wishes to retire their URL they simply send it to the retirement endpoint.  Since the token itself requires no user convenience factor, we can make it arbitrarily large to reduce the likelihood of discovery by an attacker.
 
@@ -112,46 +110,46 @@ The redirect endpoint is left to be as short as is practical:
 Obtain a short URL by POSTing a full one.
 
 ```
-  /shorten/<fullURL>
+    /shorten/<fullURL>
 ```
   
 - Returns:
 
 ```
-  StatusOK
-  {
-	"weeUrl": "<weeURL>",
-	"token": "<token>"
-  }
+    StatusOK, 200
+    {
+        "weeUrl": "<weeURL>",
+        "token": "<token>"
+    }
 ```
 
 - On error, if unable to issue (any server problem such as DB full):
 
 ```
-  InternalServerError, 500
+    InternalServerError, 500
 ```
-	  
+  
 ##### Lengthen
 
 Decode a short URL and display it.
 
 ```
-  /lengthen/<weeURL>
+    /lengthen/<weeURL>
 ```
 
 - Returns:
 
 ```
-  StatusOK
-  {
-	"url": "<fullURL>",
-  }
+    StatusOK, 200
+    {
+        "url": "<fullURL>",
+    }
 ```
 
 - On error, if short URL never issued:
 
 ```
-  StatusNotFound, 404
+    StatusNotFound, 404
 ```
 
 ##### Follow
@@ -159,13 +157,13 @@ Decode a short URL and display it.
 Decode a short URL and follow to its full URL by redirect.
 
 ```
-  /<weeURL>
+    /<weeURL>
 ```
 
 - On error:
 
 ```
-  StatusNotFound, 404
+    StatusNotFound, 404
 ```
 
 ##### Retire
@@ -187,17 +185,17 @@ Possibilities:
 - On success, or if already retired:
 
 ```
-	200
+    StatusOK, 200
 ```
 
 - On error, if token not found or never issued:
 
 ```
-  StatusNotFound, 404
+    StatusNotFound, 404
 ```
 
 *(Could there be privacy issues?  This would acknowledge that the token had been issued.  So what? The tokens are anonymous -- you cannot Lengthen them if you only own the token.*
-		
+
 ## Enhancements
 
 Important things that this small service lacks, or bad things that could become problems:
