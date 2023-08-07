@@ -83,31 +83,39 @@ These limits should be defined as configuration values.
 
 'wee' designates our service, and the domain name belongs to the deployment service.
 
-  `wee.fly.dev/`
+    `wee.fly.dev/`
 
 Normal usage -- for redirection -- looks like:
 
-  `https://wee.fly.dev/<weeURL>`
+    `https://wee.fly.dev/<weeURL>`
   
 #### APIs
-All are appended to the Service URL
+
+All are appended to the Service URL.  The API follows the prefix version convention:
+
+    `/api/v1`
 
 ##### Summary
 
-*  `POST /shorten/<fullURL>`
-*  `GET  /lengthen/<weeURL>`
-*  `GET  /retire/<token>`
+The RESTful APIs provide methods to create, view, and delete wee records:
+
+*  `POST /api/v1/shorten/<fullURL>`
+*  `GET  /api/v1/lengthen/<weeURL>`
+*  `GET  /api/v1/retire/<token>`
+
+The redirect endpoint is left to be as short as is practical:
+
 *  `GET  /<weeURL>`
   
 ##### Shorten
 
-Obtain a short URL by POSTing a full one
+Obtain a short URL by POSTing a full one.
 
 ```
   /shorten/<fullURL>
 ```
   
-    Returns:
+- Returns:
 
 ```
   StatusOK
@@ -117,7 +125,7 @@ Obtain a short URL by POSTing a full one
   }
 ```
 
-    On error, if unable to issue (any server problem such as DB full)
+- On error, if unable to issue (any server problem such as DB full):
 
 ```
   InternalServerError, 500
@@ -131,7 +139,7 @@ Decode a short URL and display it.
   /lengthen/<weeURL>
 ```
 
-    Returns:
+- Returns:
 
 ```
   StatusOK
@@ -140,7 +148,7 @@ Decode a short URL and display it.
   }
 ```
 
-* On error, if short URL never issued
+- On error, if short URL never issued:
 
 ```
   StatusNotFound, 404
@@ -154,7 +162,7 @@ Decode a short URL and follow to its full URL by redirect.
   /<weeURL>
 ```
 
-* On error:
+- On error:
 
 ```
   StatusNotFound, 404
@@ -168,27 +176,27 @@ Retire a short URL.  The owner does this by submitting the `token` that was prov
     /retire/<token>
 ```
 
-  Because of the potential for malicious use (destroying links belonging to others)
-  there should be should degree of protection (at least if this was a field application).
-  Possibilities:
-  1. Make the token sufficiently large that random attempts are unlikely. (Simple)
-  2. Make the retirement protocol involve additional degrees of owner authentication. 
-     (Potentially complicated.)
+Because of the potential for malicious use (destroying links belonging to others) there should be should degree of protection (at least if this was a fielded application).
+
+Possibilities:
+
+1. Make the token sufficiently large that random attempts are unlikely. (Simple)
+
+2. Make the retirement protocol involve additional degrees of owner authentication. (Potentially complicated.)
   
-    On success, or if already retired:
+- On success, or if already retired:
 
 ```
 	200
 ```
 
-    On error, if token not found - never issued:
+- On error, if token not found or never issued:
 
 ```
   StatusNotFound, 404
 ```
 
-    (Could there be privacy issues?  This would acknowledge that the token had been issued.
-    So what? The tokens are anonymous -- you cannot Lengthen them if you only own the token.
+*(Could there be privacy issues?  This would acknowledge that the token had been issued.  So what? The tokens are anonymous -- you cannot Lengthen them if you only own the token.*
 		
 ## Enhancements
 
@@ -200,8 +208,10 @@ Important things that this small service lacks, or bad things that could become 
    If the owner loses their receipt then they cannot retire or revise the wee URL.
    
    Possible solutions:
+
    a. Store a user identifier such as email with the receipt.
       Objections: a possible privacy violation.
+
    b. Add a reaper service that looks for dead links.  Those found could be automatically
       culled or logged for an admins attention.
 
