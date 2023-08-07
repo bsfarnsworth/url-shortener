@@ -23,13 +23,6 @@ func NewShortener(r *Repository, l *log.Logger) *Shortener {
 func (s *Shortener) FollowUrl(c *gin.Context) {
 	// this is where we redirect...
 	wee := c.Param("weeUrl")
-
-	// THIS SHOULD BE UNNECESSARY if the main routing r.GET pattern is correct
-	if wee == "" {
-		s.logger.Printf("found redirect route, ROUTER LOGIC IS WRONG")
-		c.File("./public/index.html")
-		return
-	}
 	rec, err := s.repo.find(wee)
 	if err != nil {
 		// this will be a common situation, anytime the weeUrl is mistyped (or just junk)
