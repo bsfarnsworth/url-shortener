@@ -11,6 +11,7 @@ COPY internal/ ./internal/
 COPY views/ ./views/
 
 # ENV GIN_MODE=release
+ENV API_PORT=3000
 
 RUN go build -o ./wee ./cmd/main.go
 
