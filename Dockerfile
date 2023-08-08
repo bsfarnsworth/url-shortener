@@ -5,10 +5,9 @@ WORKDIR /webapp
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY app/ ./app/
 COPY cmd/ ./cmd/
 COPY internal/ ./internal/
-COPY views/ ./views/
+COPY src/ ./src/
 
 # ENV GIN_MODE=release
 ENV API_PORT=3000
