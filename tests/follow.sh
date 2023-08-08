@@ -1,3 +1,3 @@
 #!/bin/bash
 
-curl ${DOMAIN}/${1}
+curl ${DOMAIN}/to/${1}
