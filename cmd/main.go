@@ -4,6 +4,7 @@ import (
 	"log"
 	"os"
 	
+	"github.com/gin-gonic/contrib/static"
 	"github.com/gin-gonic/gin"
 	"url-shortener/internal/wee"
 )
@@ -43,23 +44,25 @@ func main() {
 	shorty := wee.NewShortener(repo, logger)
 	
 	// Set the router as the default one shipped with Gin.
-	// React pages will be served with SPA server pattern, discussed in
-        //   https://github.com/gin-gonic/gin/issues/3109
 	router := gin.Default()
 	router.SetTrustedProxies(nil)
 
+	// HTML/JS pages will be served with the  SPA server pattern, discussed in
+        //   https://github.com/gin-gonic/gin/issues/3109
+
+	router.Use(static.Serve("/", static.LocalFile("./src", true)))
+
 	// To keep the minimal path for the shortener's Follow function
 	// accept exact "/" first but "/<url>" next;
-	// NoRoute will route everything else into React;
 
-	router.GET("/:weeUrl", shorty.FollowUrl)
+	router.GET("/to/:weeUrl", shorty.FollowUrl)
 
 	router.GET("/api/v1/lengthen/:weeUrl", shorty.LengthenUrl)
 	router.GET("/api/v1/retire/:token", shorty.RetireUrl)
 	router.POST("/api/v1/shorten", shorty.ShortenUrl)
 
 	router.NoRoute(func(c *gin.Context) {
-		c.File("./public/index.html")
+		c.File("./public/index.js")
 	})
 
 	// Start and run the server
