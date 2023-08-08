@@ -17,7 +17,7 @@
                 $.post('http://localhost:3000/api/v1/shorten', 
                        { fullUrl: url },
                        function(data, status, JSON) {
-                           $('p').append('status: ' + status + ', data: ' + data);
+                           $('p').append("<p>https://wee.fly.dev/go/" + data[name="weeUrl"] + "</p>");
 		       });
 	    });
 	});
