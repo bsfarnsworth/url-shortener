@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"database/sql"
 	"log"
+	"os"
+	"path/filepath"
 	_ "github.com/mattn/go-sqlite3"
 )
 
@@ -45,10 +47,20 @@ func NewRepository(drv string, src string, log *log.Logger) *Repository {
 // Connect opens the database and creates the Url table if it doesn't yet exist.
 func (r *Repository) Connect() error {
 
-	// Connect to specified service
 	var err error
 	var db *sql.DB
 	
+	// Create the directory for the repository, if necessary -- say, if one a volume
+	dir := filepath.Dir(r.source)
+	if dir != "." {
+		err = os.MkdirAll(dir, 0750)
+		if err != nil {
+			r.logger.Printf("Error creating dir for %s: %v\n", r.source, err)
+			return err
+		}
+	}
+	
+	// Connect to specified service
 	db, err = sql.Open(r.driver, r.source)
 	r.db = db
 	if err != nil {
