@@ -14,10 +14,10 @@
 
                 var url = $('input[name="urltext"]').val();
 		
-                $.post('http://localhost:3000/api/v1/shorten', 
+                $.post('https://wee.fly.dev/api/v1/shorten', 
                        { fullUrl: url },
                        function(data, status, JSON) {
-                           $('p').append("<p>https://wee.fly.dev/go/" + data[name="weeUrl"] + "</p>");
+                           $('p').append("<p>https://wee.fly.dev/to/" + data[name="weeUrl"] + "</p>");
 		       });
 	    });
 	});
