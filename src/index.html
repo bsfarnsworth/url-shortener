@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>Wee URL Shortener</title>
+    <meta name="viewport" content="width=device-width" />
+    <script type="text/javascript" 
+            src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js">
+    </script>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+                        
+            $('#urlsubmit').click(function() {
+
+                var url = $('input[name="urltext"]').val();
+		
+                $.post('http://localhost:3000/api/v1/shorten', 
+                       { fullUrl: url },
+                       function(data, status, JSON) {
+                           $('p').append('status: ' + status + ', data: ' + data);
+		       });
+	    });
+	});
+    </script>
+  </head>
+
+  <body>
+        <h1>Shorten your URL</h1>
+        <form>
+            <label for="urllabel">Paste the URL here</label><br>
+	    <input type="text" id="urlentry" name="urltext" required="required" />
+            <input type="button" id="urlsubmit" value="Shorten" />
+        </form>
+        <p>
+        </p>
+  </body>
+</html>
+    
