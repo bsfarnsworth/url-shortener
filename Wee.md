@@ -103,7 +103,7 @@ The RESTful APIs provide methods to create, view, and delete wee records:
 
 The redirect endpoint is left to be as short as is practical:
 
-*  `GET  /<weeURL>`
+*  `GET  /to/<weeURL>`
   
 ##### Shorten
 
@@ -157,7 +157,7 @@ Decode a short URL and display it.
 Decode a short URL and follow to its full URL by redirect.
 
 ```
-    /<weeURL>
+    /to/<weeURL>
 ```
 
 - On error:
