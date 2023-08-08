@@ -89,13 +89,13 @@ The JSON `weeUrl` value is your shortened URL.  On my development deploy it came
 - Make use of the wee URL.  If we are using the development server,
 
 ```
-localhost:3000/xqltu46
+localhost:3000/to/xqltu46
 ```
 
 or the cloud server:
 
 ```
-https://wee.fly.dev/xqltu46
+https://wee.fly.dev/to/xqltu46
 ```
 
 Your browser should display the URL that you chose to shorten.
@@ -104,6 +104,6 @@ Your browser should display the URL that you chose to shorten.
 
 ## Caveats
 
-1. At this time, the web UI is not available.
+1. The web UI is, to put it simply, not very graceful.  It offers only the ability to create wee Urls and the display of them scrolls down the screen.  But it is really simple to use :)
 
-1. The cloud deployment isn't yet connected to a volume.  This means that the database holding the URLs is lost whenever the cloud machine is stopped.  
+
